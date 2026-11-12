@@ -1,0 +1,34 @@
+name: Avisos de UGC novo
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"   # confere a cada 15 minutos
+  workflow_dispatch:          # botão "Run workflow" para rodar na hora
+
+permissions:
+  contents: write
+
+concurrency: ugc-notifier
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Conferir a loja e avisar no Discord
+        run: python3 notifier.py
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          CREATOR_ID: ${{ vars.CREATOR_ID }}
+          CREATOR_TYPE: ${{ vars.CREATOR_TYPE }}
+          DISCORD_ROLE_ID: ${{ vars.DISCORD_ROLE_ID }}
+          STORE_NAME: ${{ vars.STORE_NAME }}
+
+      - name: Salvar itens já avisados
+        run: |
+          git config user.name "ugc-notifier"
+          git config user.email "ugc-notifier@users.noreply.github.com"
+          git add seen_items.json
+          git diff --cached --quiet || (git commit -m "Atualiza itens vistos" && git push)
