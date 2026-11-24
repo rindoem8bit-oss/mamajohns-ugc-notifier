@@ -20,7 +20,7 @@ jobs:
       - name: Conferir a loja e avisar no Discord
         run: python3 notifier.py
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.UGCUPD }}
           CREATOR_ID: ${{ vars.CREATOR_ID }}
           CREATOR_TYPE: ${{ vars.CREATOR_TYPE }}
           DISCORD_ROLE_ID: ${{ vars.DISCORD_ROLE_ID }}
